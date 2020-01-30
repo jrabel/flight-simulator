@@ -61,15 +61,13 @@
             var backgroundColor = 0x87ceeb;
             scene.background = new THREE.Color(backgroundColor);
 
-            // scene.fog = new THREE.Fog(backgroundColor, 5000, 10000);
+            scene.fog = new THREE.Fog(backgroundColor, 10000, 20000);
 
             airplane = new Airplane(scene, 0, -5000, 2000);
 
-            var airplaneToCameraVector = new THREE.Vector3(0, -500, 200);
-
-            camera.position.x = airplane.x + airplaneToCameraVector.x;
-            camera.position.y = airplane.y + airplaneToCameraVector.y;
-            camera.position.z = airplane.z + airplaneToCameraVector.z;
+            camera.position.x = airplane.x + airplane.toCameraVector.x;
+            camera.position.y = airplane.y + airplane.toCameraVector.y;
+            camera.position.z = airplane.z + airplane.toCameraVector.z;
             camera.up = new THREE.Vector3(0, 0, 1);
 
             // plot cylinder at the origin
@@ -80,7 +78,7 @@
             scene.add(cylinderMesh);
 
 
-            var widthPatches = 20, depthPatches = 20;
+            var widthPatches = 40, depthPatches = 40;
             var patchWidth = 1000, patchDepth = 1000;
             var totalWidth = patchWidth * widthPatches;
             var totalDepth = patchDepth * depthPatches;
@@ -145,12 +143,29 @@
         }
 
         function render() {
-            var cameraPlaneIntersectionPoint = getCameraGroundPlaneIntersection();
-            terrainGenerator.updateTerrain(cameraPlaneIntersectionPoint);
 
-            controls.update(clock.getDelta());
+            var timeDelta = clock.getDelta();
+
+            // var cameraPlaneIntersectionPoint = getCameraGroundPlaneIntersection();
+            var airplanePosition = new THREE.Vector3(airplane.x, airplane.y, airplane.z);
+            terrainGenerator.updateTerrain(airplanePosition);
+
+            controls.update(timeDelta);
             renderer.render(scene, camera);
 
+            airplane.update(timeDelta);
+
+            camera.position.x += airplane.velocity.x * timeDelta;
+            camera.position.y += airplane.velocity.y * timeDelta;
+            camera.position.z += airplane.velocity.z * timeDelta;
+
+            // camera.position.x = airplane.x + airplane.toCameraVector.x;
+            // camera.position.y = airplane.y + airplane.toCameraVector.y;
+            // camera.position.z = airplane.z + airplane.toCameraVector.z;
+
+            controls.target = new THREE.Vector3(airplane.x, airplane.y, airplane.z);
+
+            console.log(1 / timeDelta);
         }
 
     </script>

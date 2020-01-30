@@ -28,11 +28,15 @@ var TerrainGenerator = function (scene, widthPatches, depthPatches, patchWidth, 
 
 
     this.calculateTerrainPatchCenters = function (combinedPatchCenter) {
+
+        var fractionWidthPatchesInFront = 1 / 2;
+        var fractionDepthPatchesInFront = 1 / 2;
+
         var newTerrainPatchCenterKeys = new Set();
         for (var j = 0; j < this.depthPatches; j++) {
             for (var i = 0; i < this.widthPatches; i++) {
-                var patchX = combinedPatchCenter.x + i * this.patchWidth - (this.patchWidth * (this.widthPatches - 1) / 2);
-                var patchY = combinedPatchCenter.y + j * this.patchDepth - (this.patchDepth * (this.depthPatches - 1) / 2);
+                var patchX = combinedPatchCenter.x + i * this.patchWidth - (this.patchWidth * (this.widthPatches - 1) * fractionWidthPatchesInFront);
+                var patchY = combinedPatchCenter.y + j * this.patchDepth - (this.patchDepth * (this.depthPatches - 1) * fractionDepthPatchesInFront);
                 var patchCenter = new THREE.Vector2(patchX, patchY);
 
                 newTerrainPatchCenterKeys.add(JSON.stringify(patchCenter));
